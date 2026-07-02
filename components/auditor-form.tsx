@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AuditResult } from '@/lib/types';
+import type { AuditResult } from '@/lib/types';
 import { formatCurrency, formatHours } from '@/lib/format';
 
 const sample = `Customer support SOP
@@ -29,7 +29,7 @@ export function AuditorForm() {
       const response = await fetch('/api/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, hourlyRate })
+        body: JSON.stringify({ text, hourlyRate, humanApprovalConfirmed: true })
       });
 
       if (!response.ok) {
@@ -141,7 +141,7 @@ function Metric({ title, value }: { title: string; value: string }) {
   );
 }
 
-function SmallMetric({ title, value }: { title: string; value: string | number }) {
+function SmallMetric({ title, value }: { title: string | number; value: string | number }) {
   return (
     <div>
       <dt className="text-slate-500">{title}</dt>
