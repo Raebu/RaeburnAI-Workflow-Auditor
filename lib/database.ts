@@ -1,5 +1,6 @@
 import postgres from 'postgres';
 import type { AuditResult } from './types';
+import type { Role } from './auth';
 
 let client: postgres.Sql | null = null;
 
@@ -19,6 +20,54 @@ export function getDatabase() {
   }
 
   return client;
+}
+
+export type DatabaseUser = {
+  id: string;
+  organisation_id: string;
+  email: string;
+  name: string | null;
+  role: Role;
+  password_hash: string | null;
+};
+
+export async function findUserByEmail(email: string) {
+  const sql = getDatabase();
+  const rows = await sql<DatabaseUser[]>`
+    select id, organisation_id, email, name, role, password_hash
+    from users
+    where lower(email) = lower(${email})
+    limit 1
+  `;
+  return rows[0] || null;
+}
+
+export async function createOrganisationWithOwner(input: {
+  organisationName: string;
+  ownerName: string;
+  ownerEmail: string;
+  passwordHash: string;
+}) {
+  const sql = getDatabase();
+  return sql.begin(async (tx) => {
+    const orgRows = await tx<{ id: string }[]>`
+      insert into organisations (name)
+      values (${input.organisationName})
+      returning id
+    `;
+    const organisationId = orgRows[0]?.id;
+    if (!organisationId) throw new Error('Failed to create organisation.');
+
+    const userRows = await tx<DatabaseUser[]>`
+      insert into users (organisation_id, email, name, password_hash, role)
+      values (${organisationId}, ${input.ownerEmail}, ${input.ownerName}, ${input.passwordHash}, 'owner')
+      returning id, organisation_id, email, name, role, password_hash
+    `;
+
+    const user = userRows[0];
+    if (!user) throw new Error('Failed to create owner user.');
+    return user;
+  });
 }
 
 export type SavedAuditInput = {
