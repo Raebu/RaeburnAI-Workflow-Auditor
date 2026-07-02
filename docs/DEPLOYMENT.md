@@ -15,22 +15,31 @@ docker build -t raeburnai-workflow-auditor .
 
 ## Database
 
-Saved audits require Postgres. Apply the schema before using `/api/audits`:
+Saved audits and first-party authentication require Postgres. Apply migrations before deployment:
 
 ```bash
-psql "$DATABASE_URL" -f db/schema.sql
+npm run db:migrate
 ```
 
-Docker Compose starts Postgres and applies `db/schema.sql` automatically on first initialisation.
+Seed local demo users only in development:
+
+```bash
+npm run db:seed
+```
+
+Docker Compose starts Postgres and applies `db/schema.sql` automatically on first initialisation. For repeatable production upgrades, use `npm run db:migrate`.
 
 ## Authentication and RBAC
 
-The saved-audit API expects an upstream-authenticated `x-raeburn-user` header containing a base64url JSON session user with:
+The app includes first-party workspace authentication:
 
-- `id`
-- `email`
-- `organisationId`
-- `role`
+- `/auth` login and registration UI
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/session`
+
+Passwords are hashed with bcrypt. Sessions are signed JWTs stored in HTTP-only cookies. Set `AUTH_SECRET` to a long random value in production.
 
 Supported roles:
 
@@ -39,15 +48,16 @@ Supported roles:
 - `auditor`
 - `viewer`
 
-This allows production deployments to connect Clerk, Auth.js, enterprise SSO, API gateway auth or an internal identity provider without shipping an insecure demo password system.
+Saved audit APIs enforce tenant scope and minimum role checks server-side.
 
 ## Vercel
 
 1. Import the repository into Vercel.
 2. Provision Postgres and set `DATABASE_URL`.
-3. Set environment variables from `.env.example`.
-4. Deploy from `main` after CI passes.
-5. Confirm `/api/health` and `/api/ready` respond successfully.
+3. Set `AUTH_SECRET` and variables from `.env.example`.
+4. Run `npm run db:migrate` against the production database.
+5. Deploy from `main` after CI passes.
+6. Confirm `/api/health` and `/api/ready` respond successfully.
 
 ## Docker
 
@@ -64,7 +74,7 @@ docker compose up --build
 
 ## Operational controls
 
-- Store API keys in the platform secret manager.
+- Store API keys and `AUTH_SECRET` in the platform secret manager.
 - Do not log raw customer documents.
 - Put public deployments behind TLS, WAF and platform-level rate limits.
 - Review audit outputs before making staffing, compliance or financial decisions.
@@ -73,6 +83,5 @@ docker compose up --build
 
 ## TODO
 
-- Add first-party login UI once a preferred identity provider is chosen.
 - Add full browser E2E with Playwright once browser installation is configured in CI.
-- Add formal migration tooling for schema versioning.
+- Add account-management UI for inviting users and changing roles.
