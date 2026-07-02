@@ -7,4 +7,23 @@ services:
       NODE_ENV: production
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       DEFAULT_HOURLY_RATE: "35"
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/raeburnai_workflow_auditor
+    depends_on:
+      - postgres
     restart: unless-stopped
+
+  postgres:
+    image: postgres:16.3-alpine
+    environment:
+      POSTGRES_DB: raeburnai_workflow_auditor
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
