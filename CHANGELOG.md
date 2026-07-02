@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.2.0 - 2026-07-02
+
+### Added
+
+- Built-in login and registration UI at `/auth`.
+- Registration, login, logout and session APIs.
+- Signed JWT sessions stored in HTTP-only cookies.
+- bcrypt password hashing.
+- Formal migration runner with `npm run db:migrate`.
+- Seed runner with `npm run db:seed`.
+- Tracked initial SQL migration in `db/migrations`.
+
+### Changed
+
+- Saved audit APIs now use first-party session auth.
+- README, deployment docs and roadmap updated to remove login and migration blockers.
+
 ## 1.1.0 - 2026-07-02
 
 ### Added
