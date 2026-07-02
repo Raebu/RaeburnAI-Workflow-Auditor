@@ -2,7 +2,7 @@
 
 ## Auth model
 
-RaeburnAI Workflow Auditor now includes first-party workspace authentication:
+RaeburnAI Workflow Auditor includes first-party workspace authentication:
 
 - `POST /api/auth/register` creates an organisation and owner account.
 - `POST /api/auth/login` verifies email and password credentials.
@@ -17,11 +17,41 @@ Passwords are hashed with bcrypt. Sessions are signed JWTs stored in HTTP-only c
 | Role | Access |
 | --- | --- |
 | `owner` | Full organisation-level access. |
-| `admin` | Administrative access except ownership transfer. |
+| `admin` | Invite users, change roles, view audit events and administer the workspace. |
 | `auditor` | Create and read audits. |
 | `viewer` | Read audits only. |
 
-Saved audit APIs enforce role checks server-side and scope all reads/writes to the signed-in user's organisation.
+Saved audit and account APIs enforce role checks server-side and scope reads/writes to the signed-in user's organisation.
+
+## Account management
+
+`/account` provides a workspace admin UI for:
+
+- inviting users
+- assigning `admin`, `auditor` or `viewer` roles
+- changing non-owner user roles
+- viewing durable security audit events
+
+APIs:
+
+```bash
+GET /api/account/users
+POST /api/account/users
+PATCH /api/account/users
+GET /api/account/audit-events
+```
+
+## Durable audit events
+
+Security-sensitive actions are written to the `audit_events` table, including:
+
+- registration
+- login
+- logout
+- saved audit creation
+- saved audit reads/lists
+- user invitations
+- role changes
 
 ## Database setup
 
