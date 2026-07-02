@@ -4,24 +4,27 @@
 
 - Workflow audit UI
 - Audit API
+- Upload parsing for PDF, DOCX, CSV, TXT and Markdown
 - AI provider with deterministic fallback
 - Opportunity scoring and savings estimates
 - Three-phase implementation roadmap
+- Saved audits API backed by Postgres
+- Auth/RBAC foundation with tenant-scoped audit access
 - Health and readiness endpoints
 - CI, CodeQL, dependency scanning and Docker build check
 
 ## Next release
 
-- PDF, DOCX, CSV and Markdown upload parsing
+- First-party Auth.js, Clerk or enterprise SSO integration
+- Saved-audit management UI
 - Export reports to PDF and Markdown
-- Saved audits with authentication
-- Organisation workspaces
-- Database persistence
+- Formal migration runner
+- Durable audit-event writes
 - More granular ROI model
 
 ## Enterprise roadmap
 
-- RBAC and tenant isolation
+- Row-level security policies for shared Postgres or Supabase deployments
 - Audit history and evidence packs
 - Connector imports from Google Drive and SharePoint
 - CRM and ticketing workflow mapping
