@@ -11,19 +11,21 @@
 - Saved audits API backed by Postgres
 - Built-in login and registration UI
 - JWT cookie sessions
-- Auth/RBAC foundation with tenant-scoped audit access
+- Auth/RBAC with tenant-scoped audit access
+- Account invite and role-management UI
+- Durable audit-event writes
 - Formal migration runner with tracked SQL migrations
+- Playwright browser E2E tests in CI
 - Health and readiness endpoints
 - CI, CodeQL, dependency scanning and Docker build check
 
 ## Next release
 
 - Saved-audit management UI
-- Account-management UI for inviting users and changing roles
 - Export reports to PDF and Markdown
-- Durable audit-event writes
+- Invite acceptance email delivery provider
 - More granular ROI model
-- Browser E2E with Playwright
+- Advanced user lifecycle controls such as suspend and remove user
 
 ## Enterprise roadmap
 
