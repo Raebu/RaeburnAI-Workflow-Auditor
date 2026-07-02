@@ -8,6 +8,7 @@ services:
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       DEFAULT_HOURLY_RATE: "35"
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/raeburnai_workflow_auditor
+      AUTH_SECRET: local-development-auth-secret-change-before-production
     depends_on:
       - postgres
     restart: unless-stopped
